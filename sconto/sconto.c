@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-void main()
+int main(int argc, char * argv[])
 {
     int continua, sconto;
     float denaro;
@@ -40,4 +40,5 @@ void main()
         printf("Vuoi reinserire un ulteriore somma di denaro?\n(0) No\n(1) Si\n");
         scanf("%i", &continua);
     } while (continua);
+    return 0;
 }
