@@ -21,15 +21,28 @@ int main(int argc, char *argv[])
         b = a;
         a = tmp;
     }
-    do
+    while (1)
     {
-        somma += numero;
         printf("Inserisci un numero: ");
         scanf("%f", &numero);
-        i++;
-    } while (numero > a && numero < b);
-    i--;
-    media = somma / i;
-    printf("La media dei numeri compresi nell'intervallo %.2f-%.2f è %.2f\n", a, b, media);
+        if (numero > a && numero < b)
+        {
+            i++;
+            somma += numero;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if (i == 0)
+    {
+        printf("Non hai inserito nessun numero nell'intervallo");
+    }
+    else
+    {
+        media = somma / i;
+        printf("La media dei numeri compresi nell'intervallo %.2f-%.2f è %.2f\n", a, b, media);
+    }
     return 0;
 }
