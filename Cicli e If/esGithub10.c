@@ -56,11 +56,6 @@ int main(int argc, char *argv[])
     else
     {
         printf("Degli articoli che hai inserito:\n");
-        if (iBevande != 0)
-        {
-            media = sommaBevande / (float)iBevande;
-            printf("- La media dell'incasso delle bevande è %.2f\n", media);
-        }
         if (iRistorazione == 0 || iBevande == 0)
         {
             if (iRistorazione == 0)
@@ -69,16 +64,21 @@ int main(int argc, char *argv[])
             }
             else
             {
+                media = sommaRistorazione / (float)iRistorazione;
+                printf("- La media dell'incasso della ristorazione è %.2f\n", media);
+            }
+            if (iBevande == 0)
+            {
                 printf("- Non hai inserito incassi da bevande.\n");
+            }
+            else
+            {
+                media = sommaBevande / (float)iBevande;
+                printf("- La media dell'incasso delle bevande è %.2f\n", media);
             }
         }
         else
         {
-            if (iRistorazione != 0)
-            {
-                media = sommaRistorazione / (float)iRistorazione;
-                printf("- La media dell'incasso della ristorazione è %.2f\n", media);
-            }
             if (iBevande == iRistorazione)
             {
                 printf("- Sono state vendute a pari numero bevande e ristorazioni\n");
