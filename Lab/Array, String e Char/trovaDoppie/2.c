@@ -8,16 +8,19 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2){
+    if (argc != 2)
+    {
         printf("Errore negli argomenti\n");
         return 0;
     }
+    char last = '\n';
     int doppie = 0;
     for (int i = 0; i < strlen(argv[1]) - 1; i++)
     {
-        if (argv[1][i] == argv[1][i + 1] && argv[1][i] != argv[1][i - 1])
+        if (argv[1][i] == argv[1][i + 1] && argv[1][i] != last)
         {
             doppie++;
+            last = argv[1][i];
         }
     }
     if (doppie != 0)
