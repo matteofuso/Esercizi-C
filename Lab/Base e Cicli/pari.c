@@ -1,11 +1,12 @@
+/*
+    Scrivi un programma in C che dopo aver letto N numeri calcoli
+    la somma dei numeri pari
+*/
+
 #include <stdio.h>
 
 void main()
 {
-    /*
-        Scrivi un programma in C che dopo aver letto N numeri calcoli
-        la somma dei numeri pari
-    */
     int numero, i, somma = 0, conunter = 0, pari = 0;
     printf("Quanti numeri vuoi leggere? ");
     scanf("%i", &i);

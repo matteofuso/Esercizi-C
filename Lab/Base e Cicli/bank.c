@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 /*
     Una banca vuole conoscere alcune informazioni sulle proprie azioni detenute in portafoglio.
     Scrivere il programma in c che dopo aver inserito da tastiera la denominazione dell’azione e il suo prezzo
@@ -11,6 +9,8 @@
         5) La media dei prezzi delle azioni con un importo compreso tra 2,50 e 3,50 euro, estremi inclusi.
     L’inserimento termina con un numero negativo.
 */
+
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {

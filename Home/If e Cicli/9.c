@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 /*
     Progettare un algoritmo che risolva il seguente problema. Si richieda
     all’utente di inserire una serie di terne di dati numerici (A, B, C).
@@ -10,6 +8,9 @@
     valori inseriti. Si stampino a video tali valori massimi e minimi prima
     di terminare il programma.
 */
+
+#include <stdio.h>
+
 
 int main(int argc, char *argv[])
 {

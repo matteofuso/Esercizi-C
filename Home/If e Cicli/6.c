@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 /*
     Progettare un algoritmo che effettui le seguenti operazioni:
     • legga da tastiera una coppia di valori interi A e B con A<B;
@@ -8,6 +6,9 @@
     • conteggi la media dei valori letti;
     • prima di terminare, stampi il valore calcolato.
 */
+
+#include <stdio.h>
+
 
 int main(int argc, char *argv[])
 {

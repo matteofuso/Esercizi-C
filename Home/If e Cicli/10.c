@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-
 /*
     Una birreria a fine serata deve conteggiare l’incasso. La cassiera accende il software gestionale il quale le chiede di inserire una alla volta le consumazioni servite.
     Le consumazioni si dividono in bevande e ristorazione. La cassiera per ogni consumazione deve inserire la tipologia di consumazione e il suo importo.
@@ -10,6 +7,10 @@
     2.	La media dell’incasso della ristorazione
     3.	Deve indicare se sono state vendute più bevande o più ristorazioni
 */
+
+#include <stdio.h>
+#include <string.h>
+
 
 int main(int argc, char *argv[])
 {

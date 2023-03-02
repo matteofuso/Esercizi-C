@@ -1,11 +1,12 @@
+/*
+    Scrivere un programma in c che dopo aver richiesto all'utente quanti numeri inserire,
+    ne calcola la somma e la visualizza a video
+*/
+
 #include <stdio.h>
 
 void main()
 {
-    /*
-        Scrivere un programma in c che dopo aver richiesto all'utente quanti numeri inserire,
-        ne calcola la somma e la visualizza a video
-    */
     float numero, somma = 0;
     int i, conunter = 0;
     printf("Quanti numeri vuoi leggere? ");

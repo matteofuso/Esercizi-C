@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <math.h>
-
 /*
     Progettare un algoritmo che risolve il seguente problema. Si desidera
     calcolare la somma delle radici quadrate di N valori numerici inseriti
@@ -9,6 +6,10 @@
     con un messaggio di errore quando viene inserito un numero che non
     permette di effettuare il calcolo (nel dominio dei numeri reali).
 */
+
+#include <stdio.h>
+#include <math.h>
+
 
 int main(int argc, char *argv[])
 {

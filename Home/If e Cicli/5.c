@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 /*
     Progettare un algoritmo che effettui le seguenti operazioni:
     • continui a leggere da tastiera una serie di terne di valori interi A ,
@@ -7,6 +5,9 @@
     • conteggi il numero di volte in cui la differenza tra A e B è pari, dispari, e quando è nulla
     • prima di terminare, visualizzi il valore dei valori conteggiati
 */
+
+#include <stdio.h>
+
 
 int main(int argc, char *argv[])
 {

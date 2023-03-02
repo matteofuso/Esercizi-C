@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 /*
     Scrivi un programma che legge da argv[1] un numero intero positivo (N) e poi
     disegna a terminale un quadrato vuoto composto di asterischi (‘*’)
@@ -19,6 +16,10 @@
     *   *
     *****
 */
+
+#include <stdio.h>
+#include <stdlib.h>
+
 
 int main(int argc, char *argv[])
 {

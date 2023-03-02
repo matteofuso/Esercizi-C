@@ -1,11 +1,12 @@
+/*
+    Scrivi un programma in C che dopo aver letto N numeri calcoli
+    la somma e la media dei numeri maggiori di 5
+*/
+
 #include <stdio.h>
 
 void main()
 {
-    /*
-        Scrivi un programma in C che dopo aver letto N numeri calcoli
-        la somma e la media dei numeri maggiori di 5
-    */
     float numero, somma = 0;
     int i, conunter = 0, maggiori = 0;
     printf("Quanti numeri vuoi leggere? ");
