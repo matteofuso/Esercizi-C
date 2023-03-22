@@ -8,8 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    int i;
-    char final[strlen(argv[1])];
+    int i, j;
     if (argc != 3)
     {
         printf("Errore negli argomenti.\n");
@@ -22,11 +21,15 @@ int main(int argc, char *argv[])
     }
     for (i = 0; i < strlen(argv[1]); i++)
     {
-        if (argv[1][i] != argv[2][0])
+        if (argv[1][i] == argv[2][0])
         {
-            final[strlen(final)] = argv[1][i];
+            for (j = i; j < strlen(argv[1]); j++)
+            {
+                argv[1][j] = argv[1][j + 1];
+            }
+            i--;
         }
     }
-    printf("La stringa senza il carattere %c è %s\n", argv[2][0], final);
+    printf("La stringa senza il carattere %c è %s\n", argv[2][0], argv[1]);
     return 0;
 }
