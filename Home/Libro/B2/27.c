@@ -21,7 +21,7 @@ void concat(char *p, char *s)
 
 int main(int argc, char *argv[])
 {
-    char p[200], s[100];
+    char p[200] = {0}, s[100];
     printf("Inserisci la prima stringa: ");
     scanf("%s", p);
     printf("Inserisci la seconda stringa: ");

@@ -9,14 +9,12 @@
 
 void add(char *str, char c)
 {
-    int i = strlen(str);
-    *(str + i) = *(str + i - 1);
-    *(str + i - 1) = c;
+    *(str + strlen(str)) = c;
 }
 
 int main(int argc, char *argv[])
 {
-    char s[100];
+    char s[100] = {0};
     char *p = argv[1];
     if (argc != 3)
     {
