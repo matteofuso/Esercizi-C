@@ -4,6 +4,17 @@
 
 #include <stdio.h>
 
+int input(char num[])
+{
+    int n;
+    do
+    {
+        printf("Inserisci il %s numero (Maggiore di 0): ", num);
+        scanf("%d", &n);
+    } while (n <= 0);
+    return n;
+}
+
 int somma(int a, int b)
 {
     return a + b;
@@ -11,17 +22,6 @@ int somma(int a, int b)
 
 int main(int argc, char *argv[])
 {
-    int a, b;
-    do
-    {
-        printf("Inserisci il primo numero (Maggiore di 0): ");
-        scanf("%d", &a);
-    } while (a <= 0);
-    do
-    {
-        printf("Inserisci il secondo numero (Maggiore di 0): ");
-        scanf("%d", &b);
-    } while (b <= 0);
-    printf("La somma è %d\n", somma(a, b));
+    printf("La somma è %d\n", somma(input("secondo"), input("primo")));
     return 0;
 }
