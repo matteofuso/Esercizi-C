@@ -136,7 +136,7 @@ int getPositive(int min, char *msg)
     return n;
 }
 
-int menu(int l)
+int menu()
 {
     int s;
     printf("\n0. Esci\n");
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
     int s, nums[SHRT_MAX], l = popola(nums);
     while (1)
     {
-        s = menu(l);
+        s = menu();
         if (s == 0)
         {
             printf("Programma terminato!\n");
