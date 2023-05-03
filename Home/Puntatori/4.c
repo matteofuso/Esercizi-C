@@ -26,87 +26,11 @@
 #include <stdio.h>
 #include <limits.h>
 
-int menu(int n)
+int trova(int n, int l, int *nums)
 {
-    int s, max;
-    printf("0. Esci\n");
-    printf("1. Inserisci un elemento\n");
-    max = 1;
-    if (n != 0)
+    for (int i = 0; i < l; i++)
     {
-        printf("2. Mostra il contenuto dell'array\n");
-        printf("3. Modifica un elemento\n");
-        printf("4. Elimina un elemento\n");
-        printf("5. Ricerca un elemento\n");
-        printf("6. Sostituisci un elemento in una certa posizione\n");
-        printf("7. Mostra il contenuto dell'array all'inverso\n");
-        printf("8. Mostra il valore massimo dell'array\n\n");
-        max = 8;
-    }
-    do
-    {
-        printf("Inserisci un numero nell'intervallo: ");
-        scanf("%d", &s);
-    } while (s < 0 || s > max);
-    return s;
-}
-
-void mostra(int n, int *nums)
-{
-    printf("Ecco l'array:\n");
-    for (int i = 0; i < n; i++)
-    {
-        printf("%d - %d\n", i, nums[i]);
-    }
-}
-
-void mostraInverso(int n, int *nums)
-{
-    printf("Ecco l'array:\n");
-    for (int i = n - 1; i >= 0; i--)
-    {
-        printf("%d - %d\n", i, nums[i]);
-    }
-}
-
-void inserisci(int *n, int *nums)
-{
-    printf("Inserisci gli elementi. Digita -1 per uscire:\n");
-    while (*n < sizeof(nums))
-    {
-        do
-        {
-            printf("%d - ", *n);
-            scanf("%d", nums + *n);
-        } while (nums[*n] < -1);
-        if (nums[*n] != -1)
-        {
-            (*n)++;
-            continue;
-        }
-        break;
-    }
-}
-
-void sostituisci(int p, int *nums)
-{
-    int n;
-    do
-    {
-        printf("Inserisci il numero positivo con cui vuoi sostituire %d o esci con -1: ", nums[p]);
-        scanf("%d", &n);
-    } while (n < -1);
-    if (n != -1)
-    {
-        nums[p] == n;
-    }
-}
-
-int trova(int a, int n, int *nums)
-{
-    for (int i = 0; i < n; i++)
-    {
-        if (nums[i] == a)
+        if (nums[i] == n)
         {
             return i;
         }
@@ -114,10 +38,84 @@ int trova(int a, int n, int *nums)
     return -1;
 }
 
-int max(int n, int *nums)
+int popola(int *nums)
+{
+    int l = 0;
+    printf("Inserisci gli elementi. Digita -1 per uscire:\n");
+    while (1)
+    {
+        do
+        {
+            printf("%d - ", l);
+            scanf("%d", nums + l);
+        } while (nums[l] < -1);
+        if (nums[l] != -1)
+        {
+            l++;
+            continue;
+        }
+        return l;
+    }
+}
+
+void aggiungi(int n, int *l, int *nums)
+{
+    nums[*l] = n;
+    (*l)++;
+}
+
+void mostra(int l, int *nums)
+{
+    for (int i = 0; i < l; i++)
+    {
+        printf("%d - %d\n", i, nums[i]);
+    }
+}
+
+int modifica(int start, int end, int l, int *nums)
+{
+    int i = trova(start, l, nums);
+    if (i == -1)
+    {
+        return 1;
+    }
+    nums[i] = end;
+    return 0;
+}
+
+int rimuovi(int n, int *l, int *nums)
+{
+    int i = trova(n, *l, nums);
+    if (i == -1)
+    {
+        return 0;
+    }
+    while (i < *l)
+    {
+        nums[i] = nums[i + 1];
+        i++;
+    }
+    (*l)--;
+    return 1;
+}
+
+void sostituisci(int i, int n, int *nums)
+{
+    nums[i] = n;
+}
+
+void mostraInverso(int l, int *nums)
+{
+    for (int i = l - 1; i >= 0; i--)
+    {
+        printf("%d - %d\n", i, nums[i]);
+    }
+}
+
+int max(int l, int *nums)
 {
     int max = nums[0];
-    for (int i = 1; i < n; i++)
+    for (int i = 1; i < l; i++)
     {
         if (nums[i] > max)
         {
@@ -127,65 +125,120 @@ int max(int n, int *nums)
     return max;
 }
 
-void entry(int s, int *n, int *nums)
+int getPositive(int min, char *msg)
 {
-    int tmp;
+    int n;
+    do
+    {
+        printf("%s: ", msg);
+        scanf("%d", &n);
+    } while (n < min);
+    return n;
+}
+
+int menu(int l)
+{
+    int s;
+    printf("\n0. Esci\n");
+    printf("1. Mostra il contenuto dell'array\n");
+    printf("2. Inserisci un elemento in coda\n");
+    printf("3. Modifica un elemento (Dopo averlo cercato)\n");
+    printf("4. Elimina un elemento (Dopo averlo cercato)\n");
+    printf("5. Ricerca un elemento\n");
+    printf("6. Sostituisci un elemento in una certa posizione\n");
+    printf("7. Mostra il contenuto dell'array all'inverso\n");
+    printf("8. Mostra il valore massimo dell'array\n\n");
+    do
+    {
+        printf("Inserisci un numero nell'intervallo: ");
+        scanf("%d", &s);
+    } while (s < 0 || s > 8);
+    return s;
+}
+
+void entry(int s, int *l, int *nums)
+{
+    int n;
     printf("\n");
     switch (s)
     {
     case 1:
-        inserisci(n, nums);
+        mostra(*l, nums);
         break;
     case 2:
-        mostra(*n, nums);
+        n = getPositive(0, "Inserisci un numero positivo");
+        aggiungi(n, l, nums);
+        printf("Aggiunto con successo!\n");
         break;
     case 3:
-        // todo
+        int start, end;
+        printf("Inserisci il numero da modificare: ");
+        scanf("%d", &start);
+        printf("Inserisci il numero in cui modificare: ");
+        scanf("%d", &end);
+        if (modifica(start, end, *l, nums))
+        {
+            printf("Numero non trovato\n");
+        }
+        else
+        {
+            printf("Numero modificato!\n");
+        }
         break;
     case 4:
-        // todo
+        printf("Inserisci il numero da eliminare: ");
+        scanf("%d", &n);
+        if (rimuovi(n, l, nums))
+        {
+            printf("Numero rimosso con successo\n");
+        }
+        else
+        {
+            printf("Numero non trovato\n");
+        }
         break;
     case 5:
         printf("Inserisci il numero da ricercare: ");
-        scanf("%d", &tmp);
-        tmp = trova(tmp, *n, nums);
-        if (tmp == -1)
+        scanf("%d", &n);
+        n = trova(n, *l, nums);
+        if (n == -1)
         {
             printf("Non ci sono occorenze.\n");
         }
         else
         {
-            printf("La prima occerrenza è alla posizione %d.\n", tmp);
+            printf("La prima occerrenza è alla posizione %d.\n", n);
         }
         break;
     case 6:
+        int i;
         do
         {
-            printf("Inserisci la posizione (Compresa tra 0 e %d): ", *n);
-            scanf("%d", &tmp);
-        } while (tmp < 0 || tmp > *n);
-        sostituisci(tmp, nums);
+            printf("Inserisci la posizione (Compresa tra 0 e %d): ", *l);
+            scanf("%d", &i);
+        } while (i < 0 || i > *l);
+        n = getPositive(-1, "Inserisci un numero positivo con cuoi vuoi sostituire o esci con -1");
+        sostituisci(i, n, nums);
         break;
     case 7:
-        mostraInverso(*n, nums);
+        mostraInverso(*l, nums);
         break;
     case 8:
-        printf("Il massimo numero presente nell'array è %d\n", max(*n, nums));
+        printf("Il massimo numero presente nell'array è %d\n", max(*l, nums));
     }
-    printf("\n");
 }
 
 int main(int argc, char *argv[])
 {
-    int s, n = 0, nums[SHRT_MAX];
+    int s, nums[SHRT_MAX], l = popola(nums);
     while (1)
     {
-        s = menu(n);
+        s = menu(l);
         if (s == 0)
         {
             printf("Programma terminato!\n");
             return 0;
         }
-        entry(s, &n, nums);
+        entry(s, &l, nums);
     }
 }
