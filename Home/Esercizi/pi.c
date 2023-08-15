@@ -19,69 +19,73 @@
 
 #include <stdio.h>
 
-int main(int argc, char *argv[])
+int metodo(int *iterazioni)
 {
-    int scelta, iterazioni;
-    double pi, raggio;
+    int s;
     // Stampo i vari metodi disponibili
     printf("Con che metodo vuoi calcolare il pi greco?\n");
     printf("1. Formula di Leibniz\n");
-    printf("2. Formula di Nilakantha\n\n");
+    printf("2. Formula di Nilakantha\n");
     // Chiedo quale utilizzare
     do
     {
         printf("Inserisci la scelta: ");
-        scanf("%d", &scelta);
-    } while (scelta < 1 || scelta > 2);
+        scanf("%d", &s);
+    } while (s < 1 || s > 2);
     // Chiedo il numero di iterazioni
     do
     {
         printf("\nInserisci il numero di volte di esecuzione del ciclo: ");
-        scanf("%d", &iterazioni);
-    } while (iterazioni < 1);
-    if (scelta == 1)
+        scanf("%d", iterazioni);
+    } while (*iterazioni < 1);
+    return s - 1;
+}
+
+void leibniz(int iterazioni, double *pi)
+{
+    // Formula di Leibniz
+    // pi = 4/1 - 4/3 + 4/5 - 4/7 + 4/9 - ...
+    int segno = 1;
+    for (int i = 0; i < iterazioni; i++)
     {
-        // Formula di Leibniz
-        // pi = 4/1 - 4/3 + 4/5 - 4/7 + 4/9 - ...
-        for (int i = 0; i < iterazioni; i++)
-        {
-            // Alterno somma e sottrazione
-            if (i % 2 == 0)
-            {
-                // Somma
-                pi += 4 / (double)(2 * i + 1);
-            }
-            else
-            {
-                // Sottrazione
-                pi -= 4 / (double)(2 * i + 1);
-            }
-        }
+        *pi += segno * 4 / (double)(2 * i + 1);
+        segno *= -1;
+    }
+}
+
+void nilakantha(int iterazioni, double *pi)
+{
+    // Formula di Nilakantha
+    // pi = 3 + 1/(1*2*3) - 1/(2*3*5) + 1/(3*4*7) - 1/(4*5*9)
+    int segno = 1;
+    *pi = 3;
+    for (int i = 1; i < iterazioni; i++)
+    {
+        *pi += segno * (double)1 / (i * (i + 1) * (2 * i + 1));
+        segno *= -1;
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    int iterazioni;
+    double pi, raggio;
+    // Chido il metodo di calcolo
+    if (metodo(&iterazioni))
+    {
+        // Non zero = True
+        nilakantha(iterazioni, &pi);
     }
     else
     {
-        // Formula di Nilakantha
-        // pi = 3 + 1/(1*2*3) - 1/(2*3*5) + 1/(3*4*7) - 1/(4*5*9)
-        pi = 3;
-        for (int i = 1; i < iterazioni; i++)
-        {
-            // Alterno somma e sottrazione
-            if (i % 2 == 1)
-            {
-                // Somma
-                pi += (double)1 / (i * (i + 1) * (2 * i + 1));
-            }
-            else
-            {
-                // Sottrazione
-                pi -= (double)1 / (i * (i + 1) * (2 * i + 1));
-            }
-        }
+        // 0 = False
+        leibniz(iterazioni, &pi);
     }
-    printf("Il valore del pi greco calcolato è: %lf\n\n", pi);
+    printf("Il valore approssimativo del pi greco calcolato è: %.20lf\n\n", pi);
+    // Chiedo il raggio e calcolo area e circonferenza
     printf("Inserisci il raggio del cerchio: ");
     scanf("%lf", &raggio);
     printf("Il valore dell'area è %.2lf\n", pi * raggio * raggio);
-    printf("Il valore della circonferenza è %.2lf\n\n", 2 * pi * raggio);
+    printf("Il valore della circonferenza è %.2lf\n", 2 * pi * raggio);
     return 0;
 }
