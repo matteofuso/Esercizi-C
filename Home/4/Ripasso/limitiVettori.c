@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 // Definisco delle costanti con i colori
+// https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#text-formatting
 #define GREEN "\x1b[32m"
 #define RESET "\x1b[0m"
 
