@@ -26,6 +26,11 @@
 #include <stdio.h>
 #include <limits.h>
 
+/// @brief Cerca un elemento in un array
+/// @param n Numero da ricercare
+/// @param l Lunghezza dell'array
+/// @param nums Array nel quale eseguire la ricerca
+/// @return L'indice dell'elemento o -1 nel caso non sia stato trovato
 int trova(int n, int l, int *nums)
 {
     for (int i = 0; i < l; i++)
@@ -38,6 +43,9 @@ int trova(int n, int l, int *nums)
     return -1;
 }
 
+/// @brief Chiede all'utente di popolare l'array
+/// @param nums Array da popolare
+/// @return La lunghezza dell'array
 int popola(int *nums)
 {
     int l = 0;
@@ -58,12 +66,19 @@ int popola(int *nums)
     }
 }
 
+/// @brief Aggiunge un numero alla fine dell'array
+/// @param n Numero da aggiungere
+/// @param l Lunghezza dell'array
+/// @param nums Array dove aggiungere l'elemento
 void aggiungi(int n, int *l, int *nums)
 {
     nums[*l] = n;
     (*l)++;
 }
 
+/// @brief Stampa un array di interi
+/// @param l Lunghezza dell'array
+/// @param nums Array da stampare
 void mostra(int l, int *nums)
 {
     for (int i = 0; i < l; i++)
@@ -72,17 +87,28 @@ void mostra(int l, int *nums)
     }
 }
 
-int modifica(int start, int end, int l, int *nums)
+/// @brief Cerca un elemento nell'array e lo sostituisco con un altro
+/// @param before Numero da cercare
+/// @param after Numero in cui modificare
+/// @param l Lunghezza dell'array
+/// @param nums Array da modificare
+/// @return Lo stato di modifica
+int modifica(int before, int after, int l, int *nums)
 {
-    int i = trova(start, l, nums);
+    int i = trova(before, l, nums);
     if (i == -1)
     {
         return 1;
     }
-    nums[i] = end;
+    nums[i] = after;
     return 0;
 }
 
+/// @brief Rimuove un elemento dall'array
+/// @param n Numero da eliminare
+/// @param l Lunghezza dell'array
+/// @param nums Array da modificare
+/// @return Lo stato di cancellazione
 int rimuovi(int n, int *l, int *nums)
 {
     int i = trova(n, *l, nums);
@@ -99,11 +125,18 @@ int rimuovi(int n, int *l, int *nums)
     return 1;
 }
 
+/// @brief Sovrascrive un elemento dell'array
+/// @param i Posizione da sovrascrivere
+/// @param n Numero da scrivere
+/// @param nums Array da sovrascrivere
 void sostituisci(int i, int n, int *nums)
 {
     nums[i] = n;
 }
 
+/// @brief Stampa un array di interi al contrario
+/// @param l Lunghezza dell'array
+/// @param nums L'array da stampare
 void mostraInverso(int l, int *nums)
 {
     for (int i = l - 1; i >= 0; i--)
@@ -112,6 +145,10 @@ void mostraInverso(int l, int *nums)
     }
 }
 
+/// @brief Trova il numero massimo maggiore contenuto in un array
+/// @param l Lunghezza dell'array
+/// @param nums Array dove ricercare
+/// @return Il numero massimo trovato
 int max(int l, int *nums)
 {
     int max = nums[0];
@@ -125,6 +162,10 @@ int max(int l, int *nums)
     return max;
 }
 
+/// @brief Chiedo in in input un numero dato un limite inferiore
+/// @param min Limite minore
+/// @param msg Messaggio d'inserimento
+/// @return Numero inserito dall'utente
 int getPositive(int min, char *msg)
 {
     int n;
@@ -136,6 +177,8 @@ int getPositive(int min, char *msg)
     return n;
 }
 
+/// @brief Mostra il menù con tutte le scelte
+/// @return La scelta
 int menu()
 {
     int s;
@@ -156,6 +199,10 @@ int menu()
     return s;
 }
 
+/// @brief Indirizza verso i metodi del menù
+/// @param s Scelta del menù
+/// @param l Lunghezza dell'array
+/// @param nums Array dove sono salvati i numeri
 void entry(int s, int *l, int *nums)
 {
     int n;
@@ -228,6 +275,10 @@ void entry(int s, int *l, int *nums)
     }
 }
 
+/// @brief Punto di ingresso del programma
+/// @param argc Numero di argomenti inseriti in linea di comando
+/// @param argv Argomenti inseriti in linea di comando
+/// @return Lo stato di uscita 
 int main(int argc, char *argv[])
 {
     int s, nums[SHRT_MAX], l = popola(nums);
