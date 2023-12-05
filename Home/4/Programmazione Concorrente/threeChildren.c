@@ -41,7 +41,8 @@ int main(int argc, char *arv[])
     if (!pidChildSecond)
     {
         // Eseguito dal secondo figlio
-        printf("Sono il figlio QUO, il mio PID = %d\n", getpid());
+        sleep(10);
+        printf("Sono il figlio QUO, il mio PID = %d, mio padre è %d\n", getpid(), getppid());
         return 0;
     }
     // Eseguito dal terzo figlio
