@@ -43,14 +43,24 @@ int InserimentoNumero(int min, int max, int *n, char *testo)
     } while (*n < min || *n > max);
 }
 
+void Cerca(int *array, int start, int end, int n)
+{
+    for (int i = start; i < end; i++)
+    {
+        if (*(array + i) == n)
+        {
+            printf("%d : %d (%d)\n", i, n, getpid());
+        }
+    }
+}
 
 int main(int argc, char *argv[])
 {
     srand(time(0));
     int numeri[NUMERI];
     int PID1, PID2;
-    int n;
-    if (argc != 2)
+    int n = atoi(argv[2]);
+    if (argc != 3)
     {
         printf("Errore negli argomenti");
         exit(0);
@@ -63,21 +73,24 @@ int main(int argc, char *argv[])
     }
     Popola(numeri, NUMERI);
     Salva(numeri, NUMERI, f);
-    InserimentoNumero(1, 500, &n, "Inserisci un numero da ricercare (1-500): ");
-    printf("%d\n", n);
     PID1 = fork();
     if (PID1)
     {
         PID2 = fork();
-        // Padre
     }
     if (!PID1)
     {
         // F1
+        Cerca(numeri, 2000, 6000, n);
     }
     else if (!PID2)
     {
         // F2
+        Cerca(numeri, 6000, 10000, n);
+    }
+    else
+    {
+        Cerca(numeri, 0, 2000, n);
     }
     fclose(f);
     return 0;
