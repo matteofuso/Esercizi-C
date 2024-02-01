@@ -6,16 +6,21 @@
 
 #define NUMBERS 5
 
+/// @brief Main entrance of the program
+/// @param argc Size of the argv array
+/// @param argv String array that contains cli parameters
+/// @return The status of the program
 int main(int argc, char **argv)
 {
     int fd[2], p;
+    int numeri[NUMBERS];
     // Create the PIPE
     if (pipe(fd) < 0)
     {
         printf("Error calling the pipe() API\n");
         exit(-1);
     }
-    // Create the child process
+    // Generate the child process
     p = fork();
     if (p < 0)
     {
@@ -27,7 +32,6 @@ int main(int argc, char **argv)
     // Child process
     if (!p)
     {
-        int numeri[NUMBERS];
         close(fd[0]);
         // Identification
         printf("I'm the child process, my PID is %d and my parent's one is %d\n", getpid(), getppid());
@@ -50,7 +54,7 @@ int main(int argc, char **argv)
     }
     // Parent process
     close(fd[1]);
-    int numeri[NUMBERS], n;
+    int n;
     // Identification
     printf("I'm the parent process, my PID is %d and my child's one is %d\n", getpid(), p);
     // Reading the numbers from the pipe
