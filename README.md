@@ -1,8 +1,8 @@
 # Esercizi 
 
-In this repository you can find all my C exercises. There you have the text and my risolution.<br>
+In this repository you can find all my C exercises.<br>
 This repository is divided as follow:
  - Home
  - Laboratory
 
-Each folder is devided for grades (3 --> 11, 4 --> 12)
+Each folder is devided by grades (3 --> 11, 4 --> 12)
