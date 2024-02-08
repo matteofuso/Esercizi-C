@@ -68,8 +68,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            char c;
-            int counter = 0;
+            int c, counter = 0;
             close(fd[0]);
             close(fd[1]);
             waitpid(pid1, NULL, 0);
