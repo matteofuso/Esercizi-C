@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
     int fifo, pid, n;
     char buffer[BUFFER_SIZE];
     char canale;
+    FILE *log;
     // Controllo linea di comando
     if (argc != 2)
     {
@@ -49,6 +50,9 @@ int main(int argc, char *argv[])
     // Creo le fifo
     CreazioneFifo(FIRST_FIFO);
     CreazioneFifo(SECOND_FIFO);
+    // Cancellazione contenuto file
+    log = fopen("log.txt", "w");
+    fclose(log);
     // Creazione processi
     pid = fork();
     if (pid < 0)
@@ -84,26 +88,35 @@ int main(int argc, char *argv[])
         {
             printf("Chat avviata nel secondo canale:\n");
         }
-        while ((n = read(fifo, buffer, BUFFER_SIZE)) > 0 && strcmp(buffer, "HALT"))
+        while ((n = read(fifo, buffer, BUFFER_SIZE)) > 0)
         {
             if (n != BUFFER_SIZE)
             {
                 buffer[n] = '\0';
             }
+            if (strcmp(buffer, "HALT") == 0)
+            {
+                break;
+            }
+            // Scrittura su log e schermo
+            log = fopen("log.txt", "a");
             if (canale == 'p')
             {
                 printf(GREEN);
-                printf("Secondo Canale: %s", buffer);
+                fprintf(stdout, "Secondo Canale: %s", buffer);
+                fprintf(log, "Secondo Canale: %s\n", buffer);
             }
             else
             {
                 printf(BLU);
-                printf("Primo Canale: %s", buffer);
+                fprintf(stdout, "Primo Canale: %s", buffer);
+                fprintf(log, "Primo Canale: %s\n", buffer);
             }
+            fclose(log);
             printf(RESET);
         }
+        printf("L'altro canale è stato chiuso, termina la sessione scrivendo \"HALT\"\n");
         wait(NULL);
-        printf("\n");
     }
     else
     {
@@ -128,9 +141,11 @@ int main(int argc, char *argv[])
             {
                 buffer[strlen(buffer) - 1] = '\0';
             }
+            // Flush stdin
+            fflush(stdin);
             write(fifo, buffer, strlen(buffer));
         } while (strcmp(buffer, "HALT"));
-        printf("Attesa della chiusura dell'altro canale . . .");
+        printf("Attesa della chiusura dell'altro canale . . .\n");
     }
     close(fifo);
     return 0;
