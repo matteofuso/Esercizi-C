@@ -8,9 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
 #include <time.h>
 
 #define BLOCKS 8
+#define GENERATION_DELAY 2
 
 typedef struct
 {
@@ -39,7 +41,9 @@ void *Produttore(void *args)
         buffer[writeIndex % BLOCKS] = rand() % (intervallo.max - intervallo.min + 1) + intervallo.min;
         pthread_cond_signal(&condEmpty);
         pthread_mutex_unlock(&critical);
+        sleep(GENERATION_DELAY);
     }
+    pthread_cond_signal(&condEmpty); // Invio un segnale extra dopo aver prodotto tutti gli elementi
     pthread_exit(NULL);
 }
 
