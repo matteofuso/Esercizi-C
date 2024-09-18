@@ -16,7 +16,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
+/// @brief Fill an array with random integers
+/// @param array Array to fill
+/// @param len Lenght of the array
+/// @param interval1 First interval of the random numbers
+/// @param interval2 Last interval of the random numbers
 void fillArray(int *array, int len, int interval1, int interval2)
 {
     int range = interval1 - interval2;
@@ -32,14 +38,136 @@ void fillArray(int *array, int len, int interval1, int interval2)
     }
 }
 
-void printArray(int *array, int len)
+/// @brief Print an array
+/// @param array Array to print
+/// @param start Start index
+/// @param end End index
+void printArray(int *array, int start, int end)
 {
-    for (int i = 0; i < len; i++)
+    if (start <= end)
+    {
+        for (int i = start; i <= end; i++)
+        {
+            printf("[%d] %d\n", i + 1, array[i]);
+        }
+        return;
+    }
+    for (int i = start; i >= end; i--)
     {
         printf("[%d] %d\n", i + 1, array[i]);
     }
 }
 
+/// @brief Print the sum and the average of an array
+/// @param array Source array
+/// @param len Lenght of the array
+void printSumAverage(int *array, int len)
+{
+    int sum = 0;
+    double average;
+    for (int *i = array; i < array + len; i++)
+    {
+        sum += *i;
+    }
+    average = (double)sum / len;
+    printf("Somma: %d\nMedia: %.2f\n", sum, average);
+}
+
+/// @brief Print even or odd numbers
+/// @param array Source array
+/// @param len Lenght of the array
+/// @param isOdd Last bit that the number must have. If set to 0 print odd numbers, if set to 1 print even numbers
+void printEvenOdd(int *array, int len, char lastBit)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if (array[i] % 2 == lastBit)
+        {
+            printf("[%d] %d\n", i + 1, array[i]);
+        }
+    }
+}
+
+/// @brief Search and print the indexes of a number in an array
+/// @param array Source array
+/// @param len Length of the array
+/// @param number Number to search
+/// @return Number of times the number is present in the array
+int searchNumber(int *array, int len, int number)
+{
+    int times = 0;
+    for (int i = 0; i < len; i++)
+    {
+        if (array[i] == number)
+        {
+            printf("[%d] %d\n", i + 1, array[i]);
+            times++;
+        }
+    }
+    return times;
+}
+
+/// @brief Remove a number from an array
+/// @param array Source array
+/// @param len Length of the array
+/// @param number Number to remove
+/// @return Number removed
+int removeNumber(int *array, int *len, int number)
+{
+    int removed = 0;
+    int left = 0;
+    for (int i = 0; i < *len; i++)
+    {
+        if (array[i] == number)
+        {
+            removed++;
+            continue;
+        }
+        array[left] = array[i];
+        left++;
+    }
+    *len -= removed;
+    return removed;
+}
+
+/// @brief Alternate elements of an array
+/// @param array Source array
+/// @param len Length of the array
+void alternateElements(int *array, int len)
+{
+    int newLen = len - len % 2;
+    for (int i = 0; i < newLen; i += 2)
+    {
+        int temp = array[i];
+        array[i] = array[i + 1];
+        array[i + 1] = temp;
+    }
+}
+
+/// @brief Sort an array using Bubble Sort
+/// @param array Source array
+/// @param len Length of the array
+void sort(int *array, int len)
+{
+    bool swapped = true;
+    for (int i = 0; i < len - 1 && swapped; i++)
+    {
+        swapped = false;
+        for (int j = 0; j < len - i - 1; j++)
+        {
+            if (array[j] > array[j + 1])
+            {
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+                swapped = true;
+            }
+        }
+    }
+}
+
+/// @brief Show the menu and ask for a suitable choice
+/// @return User choice
 int menu()
 {
     int choice;
@@ -63,34 +191,77 @@ int menu()
     return choice;
 }
 
-void functionRedirect(int *array, int len, int choice)
+/// @brief Redirect the user choice to the right function
+/// @param array Source array
+/// @param len Array length
+/// @param choice User choice
+void functionRedirect(int *array, int *len, int choice)
 {
     switch (choice)
     {
     case 1:
         printf("Visualizzo Array:\n");
-        printArray(array, len);
+        printArray(array, 0, *len - 1);
         break;
     case 2:
+        printf("Visualizzo Array invertito:\n");
+        printArray(array, *len - 1, 0);
         break;
     case 3:
+        printf("Visualizzo somma e media:\n");
+        printSumAverage(array, *len);
         break;
     case 4:
+        printf("Visualizzo numeri pari:\n");
+        printEvenOdd(array, *len, 0);
         break;
     case 5:
+        printf("Visualizzo numeri dispari:\n");
+        printEvenOdd(array, *len, 1);
         break;
     case 6:
+        printf("Ricerca numero:\n\n");
+        printf("Inserisci il numero da cercare: ");
+        scanf("%d", &choice);
+        if (!searchNumber(array, *len, choice))
+        {
+            printf("Numero non trovato\n");
+        }
         break;
+
     case 7:
+        printf("Elimina numero:\n\n");
+        printf("Inserisci il numero da eliminare: ");
+        scanf("%d", &choice);
+        if (!removeNumber(array, len, choice))
+        {
+            printf("Numero non trovato\n");
+        }
+        else
+        {
+            printf("Numero rimosso.\nNuovo array:\n\n");
+            printArray(array, 0, *len - 1);
+        }
         break;
     case 8:
+        printf("Alternare elementi:\n");
+        alternateElements(array, *len);
+        printf("Numeri alternati.\nNuovo array:\n\n");
+        printArray(array, 0, *len - 1);
         break;
     case 9:
+        printf("Ordina Array:\n");
+        sort(array, *len);
+        printf("Array ordinato.\nNuovo array:\n\n");
+        printArray(array, 0, *len - 1);
         break;
     }
-
 }
 
+/// @brief Main entry of the program
+/// @param argc Lenght of the arguments
+/// @param argv Arguments
+/// @return Exit status
 int main(int argc, char **argv)
 {
     int len, choice;
@@ -113,6 +284,7 @@ int main(int argc, char **argv)
         {
             break;
         }
-        functionRedirect(array, len, choice);
+        functionRedirect(array, &len, choice);
     }
+    return 0;
 }
