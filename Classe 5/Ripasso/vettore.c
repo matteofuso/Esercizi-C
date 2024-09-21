@@ -25,7 +25,7 @@
 /// @param interval2 Last interval of the random numbers
 void fillArray(int *array, int len, int interval1, int interval2)
 {
-    int range = interval1 - interval2;
+    int range = interval1 - interval2 + 1;
     int min = interval1;
     if (interval1 > interval2)
     {
@@ -39,22 +39,22 @@ void fillArray(int *array, int len, int interval1, int interval2)
 }
 
 /// @brief Print an array
-/// @param array Array to print
-/// @param start Start index
+/// @param startPosition Start position of the array
+/// @param len Lenght of the array (Negative for reverse print)
 /// @param end End index
-void printArray(int *array, int start, int end)
+void printArray(int *startPosition, int len)
 {
-    if (start <= end)
+    if (len > 0)
     {
-        for (int i = start; i <= end; i++)
+        for (int i = 0; i < len; i++)
         {
-            printf("[%d] %d\n", i + 1, array[i]);
+            printf("[%d] %d\n", i + 1, startPosition[i]);
         }
         return;
     }
-    for (int i = start; i >= end; i--)
+    for (int i = -len - 1; i >= 0; i--)
     {
-        printf("[%d] %d\n", i + 1, array[i]);
+        printf("[%d] %d\n", i + 1, startPosition[i]);
     }
 }
 
@@ -76,16 +76,33 @@ void printSumAverage(int *array, int len)
 /// @brief Print even or odd numbers
 /// @param array Source array
 /// @param len Lenght of the array
-/// @param isOdd Last bit that the number must have. If set to 0 print odd numbers, if set to 1 print even numbers
-void printEvenOdd(int *array, int len, char lastBit)
+/// @param isOdd True for odd numbers, false for even numbers
+void printEvenOdd(int *array, int len, bool isOdd)
 {
     for (int i = 0; i < len; i++)
     {
-        if (array[i] % 2 == lastBit)
+        if (array[i] % 2 == isOdd)
         {
             printf("[%d] %d\n", i + 1, array[i]);
         }
     }
+}
+
+/// @brief Search the index of the first occurance of a number in an array
+/// @param array Source array
+/// @param len Length of the array
+/// @param number Number to search
+/// @return Index or -1 if the number is not present
+int firstOccurance(int *array, int len, int number)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if (array[i] == number)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 /// @brief Search and print the indexes of a number in an array
@@ -111,20 +128,23 @@ int searchNumber(int *array, int len, int number)
 /// @param array Source array
 /// @param len Length of the array
 /// @param number Number to remove
-/// @return Number removed
+/// @return Number of times the number is removed
 int removeNumber(int *array, int *len, int number)
 {
     int removed = 0;
-    int left = 0;
-    for (int i = 0; i < *len; i++)
+    int left = firstOccurance(array, *len, number);
+    if (left == -1)
+    {
+        return 0;
+    }
+    for (int i = left; i < *len; i++)
     {
         if (array[i] == number)
         {
             removed++;
             continue;
         }
-        array[left] = array[i];
-        left++;
+        array[left++] = array[i];
     }
     *len -= removed;
     return removed;
@@ -201,11 +221,11 @@ void functionRedirect(int *array, int *len, int choice)
     {
     case 1:
         printf("Visualizzo Array:\n");
-        printArray(array, 0, *len - 1);
+        printArray(array, *len);
         break;
     case 2:
         printf("Visualizzo Array invertito:\n");
-        printArray(array, *len - 1, 0);
+        printArray(array, -*len);
         break;
     case 3:
         printf("Visualizzo somma e media:\n");
@@ -213,47 +233,46 @@ void functionRedirect(int *array, int *len, int choice)
         break;
     case 4:
         printf("Visualizzo numeri pari:\n");
-        printEvenOdd(array, *len, 0);
+        printEvenOdd(array, *len, false);
         break;
     case 5:
         printf("Visualizzo numeri dispari:\n");
-        printEvenOdd(array, *len, 1);
+        printEvenOdd(array, *len, true);
         break;
     case 6:
         printf("Ricerca numero:\n\n");
         printf("Inserisci il numero da cercare: ");
         scanf("%d", &choice);
-        if (!searchNumber(array, *len, choice))
+        if (searchNumber(array, *len, choice) == 0)
         {
             printf("Numero non trovato\n");
         }
         break;
-
     case 7:
         printf("Elimina numero:\n\n");
         printf("Inserisci il numero da eliminare: ");
         scanf("%d", &choice);
-        if (!removeNumber(array, len, choice))
+        if (removeNumber(array, len, choice) == 0)
         {
             printf("Numero non trovato\n");
         }
         else
         {
             printf("Numero rimosso.\nNuovo array:\n\n");
-            printArray(array, 0, *len - 1);
+            printArray(array, *len);
         }
         break;
     case 8:
         printf("Alternare elementi:\n");
         alternateElements(array, *len);
         printf("Numeri alternati.\nNuovo array:\n\n");
-        printArray(array, 0, *len - 1);
+        printArray(array, *len);
         break;
     case 9:
         printf("Ordina Array:\n");
         sort(array, *len);
         printf("Array ordinato.\nNuovo array:\n\n");
-        printArray(array, 0, *len - 1);
+        printArray(array, *len);
         break;
     }
 }
@@ -264,19 +283,16 @@ void functionRedirect(int *array, int *len, int choice)
 /// @return Exit status
 int main(int argc, char **argv)
 {
-    int len, choice;
-    // Controllo argomenti
+    int len, choice, *array;
     if (argc != 4)
     {
         printf("Use: %s <array lenght> <minimum number> <maximum number>\n", argv[0]);
         return -1;
     }
-    // Inizializzo l'array
     len = atoi(argv[1]);
-    int array[len];
+    array = (int *)malloc(len * sizeof(int));
     srand(time(NULL));
     fillArray(array, len, atoi(argv[2]), atoi(argv[3]));
-    // Visualizzazione menu e reindirizzamento funzioni
     while (1)
     {
         choice = menu();
@@ -286,5 +302,6 @@ int main(int argc, char **argv)
         }
         functionRedirect(array, &len, choice);
     }
+    free(array);
     return 0;
 }
