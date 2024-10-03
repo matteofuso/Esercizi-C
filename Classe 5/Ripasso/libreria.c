@@ -31,7 +31,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define CSVFILE "libreria_libri.txt"
+#define LIBRICATEGORIA 30
+#define MAXCATEGORIE 10
+#define STDSTRLEN 50
 
+// Struttura dati per i libri
+typedef struct
+{
+    char titolo[STDSTRLEN];
+    char autore[STDSTRLEN];
+    int annoPubblicazione;
+    float prezzo;
+} Libro;
+
+// Struttura dati per le categorie
+typedef struct
+{
+    char Nome[STDSTRLEN];
+    Libro *libri;
+    int numeroLibri;
+} Categoria;
+
+// Struttura dati per la libreria
+typedef struct
+{
+    Categoria *categorie;
+    int numeroCategorie;
+} Libreria;
+
+// Struttura dati per la posizione di un libro
+typedef struct
+{
+    int indiceCategoria;
+    int indiceLibro;
+} PosizioneLibro;
+
+// Mostra un menù e chiede di inserire una scelta valida
+int menu(char opzioni[][], int numeroOpzioni);
+
+// Importa un libro nella libreria
+void importaLibro(Libreria *libreria, Libro libro, char *categoria);
+
+// Importa i libri da un file CSV
+void importaCSV(Libreria libreria, char *nomeFile);
+
+// Esporta i libri in un file CSV
+void esportaCSV(Libreria libreria, char *nomeFile);
+
+// Visualizza dei libri
+void LeggiLibri(Libreria libreria);
+
+// Cerca la posizione di un libro, dato il suo titolo, nella libreria
+PosizioneLibro cercaLibro(Libreria libreria, char *titolo);
+
+// Cerca la posizione di una categoria nella libreria
+int cercaCategoria(Libreria libreria, char *nome);
+
+// Modifica dei campi di un libro
+void modificaLibro(Libro *libro, int campo, void *valore);
+
+// Elimina un libro dalla libreria, dato la sua posizione
+void eliminaLibro(Libreria libreria, PosizioneLibro libro);
 
 int main(int argc, char *argv[])
 {
