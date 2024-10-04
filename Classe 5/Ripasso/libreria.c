@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #define CSVFILE "libreria_libri.csv"
 #define LIBRICATEGORIA 40
@@ -85,16 +86,8 @@ int menu(char *opzioni[], int numeroOpzioni)
     return scelta;
 }
 
-// Cerca la posizione di una categoria nella libreria, o crea una nuova categoria
-int indiceCategoria(Libreria *libreria, char *nome)
+int creaCategoria(Libreria *libreria, char *nome)
 {
-    for (int i = 0; i < libreria->numeroCategorie; i++)
-    {
-        if (strcmp(libreria->categorie[i].Nome, nome) == 0)
-        {
-            return i;
-        }
-    }
     if (libreria->numeroCategorie < MAXCATEGORIE)
     {
         strcpy(libreria->categorie[libreria->numeroCategorie].Nome, nome);
@@ -109,14 +102,30 @@ int indiceCategoria(Libreria *libreria, char *nome)
     }
 }
 
+// Cerca la posizione di una categoria nella libreria, o crea una nuova categoria
+int cercaCategoria(Libreria libreria, char *nome)
+{
+    for (int i = 0; i < libreria.numeroCategorie; i++)
+    {
+        if (strcasecmp(libreria.categorie[i].Nome, nome) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 // Importa un libro nella libreria
 void importaLibro(Libreria *libreria, Libro libro, char *categoria)
 {
-    int posizioneCategoria = indiceCategoria(libreria, categoria);
+    int posizioneCategoria = cercaCategoria(*libreria, categoria);
     Categoria *categoriaLibri;
     if (posizioneCategoria == -1)
     {
-        printf("Troppe categorie\n");
+        if (creaCategoria(libreria, categoria) == -1)
+        {
+            printf("Troppe categorie\n");
+        }
         return;
     }
     categoriaLibri = &libreria->categorie[posizioneCategoria];
@@ -127,6 +136,7 @@ void importaLibro(Libreria *libreria, Libro libro, char *categoria)
     }
     else
     {
+        printf("Cat: %s, libro: %s\n", categoria, libro.titolo);
         printf("Troppi libri in questa categoria\n");
     }
 }
@@ -150,7 +160,7 @@ void importaCSV(Libreria *libreria, char *nomeFile)
     // Legge i libri dal file
     while (fgets(riga, BUFFERSIZE, file) != NULL)
     {
-        if (sscanf(riga, "%99[^,],%99[^,],%d,%f,%99[^\n]", libro.titolo, libro.autore, &libro.annoPubblicazione, &libro.prezzo, categoria) == 5)
+        if (sscanf(riga, "%[^,],%[^,],%d,%f,%[^\r\n]", libro.titolo, libro.autore, &libro.annoPubblicazione, &libro.prezzo, categoria) == 5)
         {
             importaLibro(libreria, libro, categoria);
         }
@@ -161,7 +171,6 @@ void importaCSV(Libreria *libreria, char *nomeFile)
     }
     fclose(file);
 }
-
 
 // Esporta i libri in un file CSV
 void esportaCSV(Libreria libreria, char *nomeFile);
@@ -180,7 +189,23 @@ void stampaLibri(Libreria libreria)
 }
 
 // Cerca la posizione di un libro, dato il suo titolo, nella libreria
-PosizioneLibro cercaLibro(Libreria libreria, char *titolo);
+PosizioneLibro cercaLibro(Libreria libreria, char *titolo)
+{
+    PosizioneLibro posizione = {-1, -1};
+    for (int i = 0; i < libreria.numeroCategorie; i++)
+    {
+        for (int j = 0; j < libreria.categorie[i].numeroLibri; j++)
+        {
+            if (strcasecmp(libreria.categorie[i].libri[j].titolo, titolo) == 0)
+            {
+                posizione.indiceCategoria = i;
+                posizione.indiceLibro = j;
+                return posizione;
+            }
+        }
+    }
+    return posizione;
+}
 
 // Modifica dei campi di un libro
 void modificaLibro(Libro *libro, int campo, void *valore);
@@ -192,6 +217,7 @@ int main(int argc, char *argv[])
 {
     int scelta;
     char *opzioni[] = {"Visualizza libri", "Cerca libri per categoria", "Cerca libro per titolo", "Modifica libro", "Elimina libro", "Esci"};
+    char inputSTR[STDSTRLEN];
     int sizeOpzioni = sizeof(opzioni) / sizeof(char *);
     // Inizializzazione della libreria
     Libreria libreria;
@@ -210,6 +236,39 @@ int main(int argc, char *argv[])
         {
         case 1:
             stampaLibri(libreria);
+            break;
+        case 2:
+            printf("Inserisci il nome della categoria: ");
+            scanf(" %[^\n]", inputSTR);
+            scelta = cercaCategoria(libreria, inputSTR);
+            if (scelta != -1)
+            {
+                stampaLibri((Libreria){libreria.categorie + scelta, 1});
+            }
+            else
+            {
+                printf("Categoria non trovata\n");
+            }
+            break;
+        case 3:
+            printf("Inserisci il titolo del libro: ");
+            scanf(" %[^\n]", inputSTR);
+            PosizioneLibro libro = cercaLibro(libreria, inputSTR);
+            if (libro.indiceCategoria != -1)
+            {
+                Categoria cat = libreria.categorie[libro.indiceCategoria];
+                cat.libri+=libro.indiceLibro;
+                cat.numeroLibri = 1;
+                stampaLibri((Libreria){&cat, 1});
+            }
+            else
+            {
+                printf("Libro non trovato\n");
+            }
+            break;
+        case 4:
+            break;
+        case 5:
             break;
         }
         printf("\n");
