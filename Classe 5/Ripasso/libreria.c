@@ -83,7 +83,7 @@ int menu(char *opzioni[], int numeroOpzioni)
         printf("Inserisci un valore corretto: ");
         scanf("%d", &scelta);
     } while (scelta < 1 || scelta > numeroOpzioni);
-    return scelta;
+    return scelta - 1;
 }
 
 int creaCategoria(Libreria *libreria, char *nome)
@@ -122,11 +122,12 @@ void importaLibro(Libreria *libreria, Libro libro, char *categoria)
     Categoria *categoriaLibri;
     if (posizioneCategoria == -1)
     {
-        if (creaCategoria(libreria, categoria) == -1)
+        posizioneCategoria = creaCategoria(libreria, categoria);
+        if (posizioneCategoria == -1)
         {
             printf("Troppe categorie\n");
+            return;
         }
-        return;
     }
     categoriaLibri = &libreria->categorie[posizioneCategoria];
     if (categoriaLibri->numeroLibri < LIBRICATEGORIA)
@@ -173,7 +174,27 @@ void importaCSV(Libreria *libreria, char *nomeFile)
 }
 
 // Esporta i libri in un file CSV
-void esportaCSV(Libreria libreria, char *nomeFile);
+void esportaCSV(Libreria libreria, char *nomeFile)
+{
+    FILE *file;
+    // Controlla se il file è stato aperto correttamente
+    file = fopen(nomeFile, "w");
+    if (file == NULL)
+    {
+        printf("Errore nell'apertura del file\n");
+        return;
+    }
+    // Scrive i libri nel file
+    fprintf(file, "%s,%s,%s,%s,%s\n", "Titolo", "Autore", "Anno", "Prezzo", "Categoria");
+    for (int i = 0; i < libreria.numeroCategorie; i++)
+    {
+        for (int j = 0; j < libreria.categorie[i].numeroLibri; j++)
+        {
+            fprintf(file, "%s,%s,%d,%.2f,%s\n", libreria.categorie[i].libri[j].titolo, libreria.categorie[i].libri[j].autore, libreria.categorie[i].libri[j].annoPubblicazione, libreria.categorie[i].libri[j].prezzo, libreria.categorie[i].Nome);
+        }
+    }
+    fclose(file);
+}
 
 // Visualizza dei libri
 void stampaLibri(Libreria libreria)
@@ -207,18 +228,49 @@ PosizioneLibro cercaLibro(Libreria libreria, char *titolo)
     return posizione;
 }
 
-// Modifica dei campi di un libro
-void modificaLibro(Libro *libro, int campo, void *valore);
-
 // Elimina un libro dalla libreria, dato la sua posizione
-void eliminaLibro(Libreria libreria, PosizioneLibro libro);
+void eliminaLibro(Libreria *libreria, PosizioneLibro libro)
+{
+    for (int i = libro.indiceLibro; i < libreria->categorie[libro.indiceCategoria].numeroLibri - 1; i++)
+    {
+        libreria->categorie[libro.indiceCategoria].libri[i] = libreria->categorie[libro.indiceCategoria].libri[i + 1];
+    }
+    libreria->categorie[libro.indiceCategoria].numeroLibri--;
+}
+
+// Modifica dei campi di un libro
+void modificaLibro(Libreria *libreria, PosizioneLibro posizioneLibro, int campo, void *valore)
+{
+    Libro *libro = &libreria->categorie[posizioneLibro.indiceCategoria].libri[posizioneLibro.indiceLibro];
+    switch (campo)
+    {
+    case 0:
+        strcpy(libro->titolo, (char *)valore);
+        break;
+    case 1:
+        strcpy(libro->autore, (char *)valore);
+        break;
+    case 2:
+        libro->annoPubblicazione = *(int *)valore;
+        break;
+    case 3:
+        libro->prezzo = *(float *)valore;
+        break;
+    case 4:
+        importaLibro(libreria, *libro, (char *)valore);
+        eliminaLibro(libreria, posizioneLibro);
+        break;
+    }
+}
 
 int main(int argc, char *argv[])
 {
     int scelta;
     char *opzioni[] = {"Visualizza libri", "Cerca libri per categoria", "Cerca libro per titolo", "Modifica libro", "Elimina libro", "Esci"};
+    char *campi[] = {"Titolo", "Autore", "Anno di pubblicazione", "Prezzo", "Categoria", "Esci"};
     char inputSTR[STDSTRLEN];
     int sizeOpzioni = sizeof(opzioni) / sizeof(char *);
+    int sizeCampi = sizeof(campi) / sizeof(char *);
     // Inizializzazione della libreria
     Libreria libreria;
     libreria.categorie = (Categoria *)malloc(MAXCATEGORIE * sizeof(Categoria));
@@ -228,16 +280,16 @@ int main(int argc, char *argv[])
     while (1)
     {
         scelta = menu(opzioni, sizeOpzioni);
-        if (scelta == 6)
+        if (scelta == sizeOpzioni - 1)
         {
             break;
         }
         switch (scelta)
         {
-        case 1:
+        case 0:
             stampaLibri(libreria);
             break;
-        case 2:
+        case 1:
             printf("Inserisci il nome della categoria: ");
             scanf(" %[^\n]", inputSTR);
             scelta = cercaCategoria(libreria, inputSTR);
@@ -250,30 +302,69 @@ int main(int argc, char *argv[])
                 printf("Categoria non trovata\n");
             }
             break;
+        case 2:
         case 3:
+        case 4:
             printf("Inserisci il titolo del libro: ");
             scanf(" %[^\n]", inputSTR);
             PosizioneLibro libro = cercaLibro(libreria, inputSTR);
-            if (libro.indiceCategoria != -1)
-            {
-                Categoria cat = libreria.categorie[libro.indiceCategoria];
-                cat.libri+=libro.indiceLibro;
-                cat.numeroLibri = 1;
-                stampaLibri((Libreria){&cat, 1});
-            }
-            else
+            if (libro.indiceCategoria == -1)
             {
                 printf("Libro non trovato\n");
+                break;
             }
-            break;
-        case 4:
-            break;
-        case 5:
+            switch (scelta)
+            {
+            case 2:
+                Categoria cat = libreria.categorie[libro.indiceCategoria];
+                cat.libri += libro.indiceLibro;
+                cat.numeroLibri = 1;
+                stampaLibri((Libreria){&cat, 1});
+                break;
+            case 3:
+                while (1)
+                {
+                    int scelta = menu(campi, sizeCampi);
+                    if (scelta == sizeCampi - 1)
+                    {
+                        break;
+                    }
+                    printf("Inserisci il nuovo valore: ");
+                    if (scelta < 2)
+                    {
+                        scanf(" %[^\n]", inputSTR);
+                        modificaLibro(&libreria, libro, scelta, inputSTR);
+                    }
+                    else if (scelta == 2)
+                    {
+                        int valore;
+                        scanf("%d", &valore);
+                        modificaLibro(&libreria, libro, scelta, &valore);
+                    }
+                    else if (scelta == 3)
+                    {
+                        float valore;
+                        scanf("%f", &valore);
+                        modificaLibro(&libreria, libro, scelta, &valore);
+                    }
+                    else
+                    {
+                        printf("Inserisci il nome della nuova categoria: ");
+                        scanf(" %[^\n]", inputSTR);
+                        modificaLibro(&libreria, libro, scelta, inputSTR);
+                    }
+                }
+                break;
+            case 4:
+                eliminaLibro(&libreria, libro);
+                break;
+            }
             break;
         }
         printf("\n");
     }
     // Deallocazione della memoria
+    esportaCSV(libreria, CSVFILE);
     for (int i = 0; i < libreria.numeroCategorie; i++)
     {
         free(libreria.categorie[i].libri);
