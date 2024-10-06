@@ -34,10 +34,9 @@
 #include <strings.h>
 
 #define CSVFILE "libreria_libri.csv"
-#define LIBRICATEGORIA 40
 #define BUFFERSIZE 1024
-#define MAXCATEGORIE 10
 #define STDSTRLEN 50
+#define LISTLENSTART 8
 
 // Struttura dati per i libri
 typedef struct
@@ -54,6 +53,7 @@ typedef struct
     char Nome[STDSTRLEN];
     Libro *libri;
     int numeroLibri;
+    int dimensioneLibri;
 } Categoria;
 
 // Struttura dati per la libreria
@@ -61,6 +61,7 @@ typedef struct
 {
     Categoria *categorie;
     int numeroCategorie;
+    int dimensioneCategorie;
 } Libreria;
 
 // Struttura dati per la posizione di un libro
@@ -86,20 +87,29 @@ int menu(char *opzioni[], int numeroOpzioni)
     return scelta - 1;
 }
 
+// Crea una nuova categoria nella libreria
 int creaCategoria(Libreria *libreria, char *nome)
 {
-    if (libreria->numeroCategorie < MAXCATEGORIE)
+    if (libreria->numeroCategorie >= libreria->dimensioneCategorie)
     {
-        strcpy(libreria->categorie[libreria->numeroCategorie].Nome, nome);
-        libreria->categorie[libreria->numeroCategorie].numeroLibri = 0;
-        libreria->categorie[libreria->numeroCategorie].libri = (Libro *)malloc(LIBRICATEGORIA * sizeof(Libro));
-        libreria->numeroCategorie++;
-        return libreria->numeroCategorie - 1;
+        Categoria *nuovaCategoria = (Categoria *)realloc(libreria->categorie, 2 * libreria->dimensioneCategorie * sizeof(Categoria));
+        if (nuovaCategoria == NULL)
+        {
+            return -1;
+        }
+        libreria->categorie = nuovaCategoria;
+        libreria->dimensioneCategorie *= 2;
     }
-    else
+    strcpy(libreria->categorie[libreria->numeroCategorie].Nome, nome);
+    libreria->categorie[libreria->numeroCategorie].numeroLibri = 0;
+    libreria->categorie[libreria->numeroCategorie].libri = (Libro *)malloc(LISTLENSTART * sizeof(Libro));
+    if (libreria->categorie[libreria->numeroCategorie].libri == NULL)
     {
         return -1;
     }
+    libreria->categorie[libreria->numeroCategorie].dimensioneLibri = LISTLENSTART;
+    libreria->numeroCategorie++;
+    return libreria->numeroCategorie - 1;
 }
 
 // Cerca la posizione di una categoria nella libreria, o crea una nuova categoria
@@ -125,21 +135,24 @@ void importaLibro(Libreria *libreria, Libro libro, char *categoria)
         posizioneCategoria = creaCategoria(libreria, categoria);
         if (posizioneCategoria == -1)
         {
-            printf("Troppe categorie\n");
+            printf("Impossibile creare un ulteriore categoria\n");
             return;
         }
     }
     categoriaLibri = &libreria->categorie[posizioneCategoria];
-    if (categoriaLibri->numeroLibri < LIBRICATEGORIA)
+    if (categoriaLibri->numeroLibri >= categoriaLibri->dimensioneLibri)
     {
-        categoriaLibri->libri[categoriaLibri->numeroLibri] = libro;
-        categoriaLibri->numeroLibri++;
+        Libro *nuovoLibro = (Libro *)realloc(categoriaLibri->libri, 2 * categoriaLibri->dimensioneLibri * sizeof(Libro));
+        if (nuovoLibro == NULL)
+        {
+            printf("Impossibile aggiungere un ulteriore libro\n");
+            return;
+        }
+        categoriaLibri->libri = nuovoLibro;
+        categoriaLibri->dimensioneLibri *= 2;
     }
-    else
-    {
-        printf("Cat: %s, libro: %s\n", categoria, libro.titolo);
-        printf("Troppi libri in questa categoria\n");
-    }
+    categoriaLibri->libri[categoriaLibri->numeroLibri] = libro;
+    categoriaLibri->numeroLibri++;
 }
 
 // Importa i libri da un file CSV
@@ -266,15 +279,21 @@ void modificaLibro(Libreria *libreria, PosizioneLibro posizioneLibro, int campo,
 int main(int argc, char *argv[])
 {
     int scelta;
-    char *opzioni[] = {"Visualizza libri", "Cerca libri per categoria", "Cerca libro per titolo", "Modifica libro", "Elimina libro", "Esci"};
+    char *opzioni[] = {"Visualizza libri", "Cerca libri per categoria", "Cerca libro per titolo", "Aggiungi libro", "Modifica libro", "Elimina libro", "Esci"};
     char *campi[] = {"Titolo", "Autore", "Anno di pubblicazione", "Prezzo", "Categoria", "Esci"};
     char inputSTR[STDSTRLEN];
     int sizeOpzioni = sizeof(opzioni) / sizeof(char *);
     int sizeCampi = sizeof(campi) / sizeof(char *);
     // Inizializzazione della libreria
     Libreria libreria;
-    libreria.categorie = (Categoria *)malloc(MAXCATEGORIE * sizeof(Categoria));
+    libreria.categorie = (Categoria *)malloc(LISTLENSTART * sizeof(Categoria));
+    if (libreria.categorie == NULL)
+    {
+        printf("Impossibile creare la libreria\n");
+        return -1;
+    }
     libreria.numeroCategorie = 0;
+    libreria.dimensioneCategorie = LISTLENSTART;
     importaCSV(&libreria, CSVFILE);
     // Menu principale
     while (1)
@@ -302,9 +321,24 @@ int main(int argc, char *argv[])
                 printf("Categoria non trovata\n");
             }
             break;
-        case 2:
         case 3:
+            Libro nuovoLibro;
+            printf("Inserisci il titolo del libro: ");
+            scanf(" %[^\n]", nuovoLibro.titolo);
+            printf("Inserisci l'autore del libro: ");
+            scanf(" %[^\n]", nuovoLibro.autore);
+            printf("Inserisci l'anno di pubblicazione del libro: ");
+            scanf("%d", &nuovoLibro.annoPubblicazione);
+            printf("Inserisci il prezzo del libro: ");
+            scanf("%f", &nuovoLibro.prezzo);
+            printf("Inserisci la categoria del libro: ");
+            scanf(" %[^\n]", inputSTR);
+            importaLibro(&libreria, nuovoLibro, inputSTR);
+            printf("Libro aggiunto\n");
+            break;
+        case 2:
         case 4:
+        case 5:
             printf("Inserisci il titolo del libro: ");
             scanf(" %[^\n]", inputSTR);
             PosizioneLibro libro = cercaLibro(libreria, inputSTR);
@@ -315,13 +349,13 @@ int main(int argc, char *argv[])
             }
             switch (scelta)
             {
-            case 2:
-                Categoria cat = libreria.categorie[libro.indiceCategoria];
-                cat.libri += libro.indiceLibro;
-                cat.numeroLibri = 1;
-                stampaLibri((Libreria){&cat, 1});
-                break;
             case 3:
+                Categoria categoria = libreria.categorie[libro.indiceCategoria];
+                categoria.libri += libro.indiceLibro;
+                categoria.numeroLibri = 1;
+                stampaLibri((Libreria){&categoria, 1});
+                break;
+            case 4:
                 while (1)
                 {
                     int scelta = menu(campi, sizeCampi);
@@ -330,7 +364,7 @@ int main(int argc, char *argv[])
                         break;
                     }
                     printf("Inserisci il nuovo valore: ");
-                    if (scelta < 2)
+                    if (scelta < 2 || scelta == 4)
                     {
                         scanf(" %[^\n]", inputSTR);
                         modificaLibro(&libreria, libro, scelta, inputSTR);
@@ -341,22 +375,18 @@ int main(int argc, char *argv[])
                         scanf("%d", &valore);
                         modificaLibro(&libreria, libro, scelta, &valore);
                     }
-                    else if (scelta == 3)
+                    else
                     {
                         float valore;
                         scanf("%f", &valore);
                         modificaLibro(&libreria, libro, scelta, &valore);
                     }
-                    else
-                    {
-                        printf("Inserisci il nome della nuova categoria: ");
-                        scanf(" %[^\n]", inputSTR);
-                        modificaLibro(&libreria, libro, scelta, inputSTR);
-                    }
+                    printf("Libro modificato\n");
                 }
                 break;
-            case 4:
+            case 5:
                 eliminaLibro(&libreria, libro);
+                printf("Libro eliminato\n");
                 break;
             }
             break;
