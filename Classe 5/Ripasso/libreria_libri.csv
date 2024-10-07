@@ -1,4 +1,4 @@
-Titolo,Autore,Anno,Prezzo,Categoria
+title,author,year,price,category
 Il nome della rosa,Umberto Eco,1980,12.22,Narrativa
 La coscienza di Zeno,Italo Svevo,1923,5.99,Narrativa
 Il Gattopardo,Giuseppe Tomasi di Lampedusa,1958,26.69,Narrativa
@@ -37,3 +37,4 @@ La nausea,Jean-Paul Sartre,1938,13.14,Filosofia
 La peste,Albert Camus,1947,27.82,Filosofia
 Robinson Crusoe,Daniel Defoe,1719,23.98,Teatro
 La tempesta,William Shakespeare,1611,24.56,Teatro
+Geronimo Stilton II,Elisabetta Dami,2000,13.99,Fantasy
