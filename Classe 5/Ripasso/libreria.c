@@ -334,7 +334,7 @@ PosizioneLibro modificaLibro(Libreria *libreria, PosizioneLibro posizioneLibro, 
     case MODIFICA_PREZZO:
         libro->prezzo = *(float *)valore;
         break;
-    case MODIFICA_CATEGORIA:
+    case MODIFICA_CATEGORIA:;
         PosizioneLibro nuovaPosizione = importaLibro(libreria, *libro, (char *)valore);
         eliminaLibro(libreria, posizioneLibro);
         posizioneLibro = nuovaPosizione;
@@ -369,11 +369,11 @@ void gestisciMenuModifica(Libreria *libreria, PosizioneLibro libro)
             inputString(inputSTR, "Inserisci il nuovo valore: ");
             libro = modificaLibro(libreria, libro, scelta, inputSTR);
             break;
-        case MODIFICA_ANNO:
+        case MODIFICA_ANNO:;
             int valoreAnno = inputInt("Inserisci il nuovo anno: ", 0, INT_MAX);
             modificaLibro(libreria, libro, scelta, &valoreAnno);
             break;
-        case MODIFICA_PREZZO:
+        case MODIFICA_PREZZO:;
             float valorePrezzo = inputFloat("Inserisci il nuovo prezzo: ", 0, FLT_MAX);
             modificaLibro(libreria, libro, scelta, &valorePrezzo);
             break;
@@ -418,7 +418,7 @@ void gestisciMenu(Libreria *libreria)
                 printf("Categoria non trovata\n");
             }
             break;
-        case AGGIUNGI_LIBRO:
+        case AGGIUNGI_LIBRO:;
             Libro nuovoLibro;
             // Chiede all'utente di inserire i dati del nuovo libro
             inputString(nuovoLibro.titolo, "Inserisci il titolo del libro: ");
@@ -450,7 +450,7 @@ void gestisciMenu(Libreria *libreria)
             // Esegue l'operazione scelta
             switch (scelta)
             {
-            case CERCA_LIBRO_PER_TITOLO:
+            case CERCA_LIBRO_PER_TITOLO:;
                 // Crea una libreria temporanea per la stampa
                 Categoria categoria = libreria->categorie[libro.indiceCategoria];
                 categoria.libri += libro.indiceLibro;
