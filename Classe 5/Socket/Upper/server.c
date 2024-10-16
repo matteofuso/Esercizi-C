@@ -17,6 +17,14 @@
 #define PORT 2021
 #define BUFFERSIZE 1024
 
+int upperString(char *str)
+{
+    for (int i = 0; i < strlen(str); i++)
+    {
+        str[i] = toupper(str[i]);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     unsigned char buffer[BUFFERSIZE];
@@ -35,7 +43,7 @@ int main(int argc, char *argv[])
     // Bind del socket
     bind(socketfd, (struct sockaddr *)&server, sizeof(server));
     listen(socketfd, 10);
-    printf("Server in ascolto\n");
+    printf("Server in ascolto\n\n");
     // Accettazione della connessione
     while (1)
     {
@@ -43,10 +51,7 @@ int main(int argc, char *argv[])
         printf("Connessione accettata\n");
         read(soa, buffer, BUFFERSIZE);
         printf("Messaggio ricevuto: %s\n", buffer);
-        for (int i = 0; i < strlen(buffer); i++)
-        {
-            buffer[i] = toupper(buffer[i]);
-        }
+        upperString(buffer);
         printf("Messaggio inviato: %s\n", buffer);
         write(soa, buffer, BUFFERSIZE);
         close(soa);
