@@ -16,25 +16,6 @@
 #define SRV_PORT 5555
 #define STRLEN 128
 
-void strSort(char *str, int strlen)
-{
-    bool sorted = false;
-    for (int i = 0; i < strlen - 1 && !sorted; i++)
-    {
-        sorted = true;
-        for (int j = 0; j < strlen - i - 1; j++)
-        {
-            if (str[j] > str[j + 1])
-            {
-                char c = str[i];
-                str[i] = str[j];
-                str[j] = c;
-                sorted = false;
-            }
-        }
-    }
-}
-
 int main(int argc, char *argv[])
 {
     struct sockaddr_in server;
